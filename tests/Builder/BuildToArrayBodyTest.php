@@ -40,6 +40,20 @@ class BuildToArrayBodyTest extends TestCase
             ]
         );
 
+        $userName = new Definition(
+            DefinitionType::data(),
+            'Some',
+            'UserName',
+            [
+                new Constructor('String'),
+            ],
+            [
+                new Deriving\Equals(),
+                new Deriving\FromString(),
+                new Deriving\ToString(),
+            ]
+        );
+
         $email = new Definition(
             DefinitionType::data(),
             'Some',
@@ -55,6 +69,7 @@ class BuildToArrayBodyTest extends TestCase
 
         $constructor = new Constructor('My\Person', [
             new Argument('id', 'My\UserId'),
+            new Argument('userName', 'Some\UserName', true),
             new Argument('name', 'string', true),
             new Argument('email', 'Some\Email'),
             new Argument('secondaryEmails', 'Some\Email', false, true),
@@ -80,6 +95,7 @@ class BuildToArrayBodyTest extends TestCase
 
         return [
             'id' => \$this->id->toString(),
+            'userName' => null === \$this->userName ? null : \$this->userName->toString(),
             'name' => \$this->name,
             'email' => \$this->email->toString(),
             'secondaryEmails' => \$secondaryEmails,
@@ -88,7 +104,7 @@ class BuildToArrayBodyTest extends TestCase
 
 CODE;
 
-        $this->assertSame($expected, buildToArrayBody($definition, $constructor, new DefinitionCollection($definition, $userId, $email), ''));
+        $this->assertSame($expected, buildToArrayBody($definition, $constructor, new DefinitionCollection($definition, $userId, $userName, $email), ''));
     }
 
     /**
